@@ -2,6 +2,10 @@
 import { BotContext, ConversationState } from 'botbuilder';
 
 export class AppContext <State> extends BotContext {
+    // instead of adding things here, add them in `from()`
+    private constructor(context: BotContext) {
+        super(context);
+    }
 
     // define the properties and methods to add to BotContext
     state!: State;
@@ -9,15 +13,9 @@ export class AppContext <State> extends BotContext {
         return this.sendActivity(text);
     }
 
-    // this is a nasty piece of work that will go away
-    private constructor(
-        context: BotContext,
-    ) {
-        super(context.adapter, context.request);
-        Object.assign(this, context);
-    }
-
     // "from" adds any properties or methods that depend on arguments or async calls or both
+    // think of it as an async constructor
+
     static async from <State = any> (
         context: BotContext,
         conversationState: ConversationState<State>,
