@@ -18,8 +18,8 @@ bot
 
 bot.listen(withContext(async context => {
     if (context.request.type === 'message') {
-        const count = context.state.count === undefined ? 0 : context.state.count + 1;
-        await context.reply(`${count}: You said "${context.request.text}"`);
+        context.state.count = context.state.count === undefined ? 0 : context.state.count + 1;
+        await context.reply(`${context.state.count}: You said "${context.request.text}"`);
     } else {
         await context.reply(`[${context.request.type} event detected]`);
     }
