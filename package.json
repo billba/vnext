@@ -10,7 +10,7 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
-  "license": "ISC",
+  "license": "MIT",
   "dependencies": {
     "botbuilder-core": "file:../botbuilder-js/libraries/botbuilder-core",
     "botbuilder-core-extensions": "file:../botbuilder-js/libraries/botbuilder-core-extensions",
