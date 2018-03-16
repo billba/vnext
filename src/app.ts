@@ -1,10 +1,10 @@
 import { BrandonBot, BrandonContext } from './BrandonBot';
 
-interface MyState {
+interface EchoState {
     count: number;
 }
 
-const bot = new BrandonBot<MyState>();
+const bot = new BrandonBot<EchoState>();
 
 bot.processRequest(async context => {
     if (context.request.type === 'message') {
@@ -15,7 +15,7 @@ bot.processRequest(async context => {
     }
 });
 
-function onSomeEventSomewhere(context: BrandonContext<MyState>) {
+function onSomeEventSomewhere(context: BrandonContext<EchoState>) {
     bot.startConversation(context, async context => {
         context.reply(`This is a proactive message`);
     })
