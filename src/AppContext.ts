@@ -1,5 +1,5 @@
 
-import { BotContext, ConversationState } from 'botbuilder';
+import { Activity, BotContext, ConversationState } from 'botbuilder';
 
 export class AppContext <State> extends BotContext {
     // instead of adding things here, add them in `from()`
@@ -9,8 +9,8 @@ export class AppContext <State> extends BotContext {
 
     // define the properties and methods to add to BotContext
     state!: State;
-    reply(text: string) {
-        return this.sendActivity(text);
+    reply(...activityOrText: (string | Partial<Activity>)[]) {
+        return this.sendActivity(... activityOrText);
     }
 
     // "from" adds any properties or methods that depend on arguments or async calls or both
