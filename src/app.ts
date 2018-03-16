@@ -1,4 +1,4 @@
-import { ConsoleBot, AppContext } from './bootstrap';
+import { ConsoleBot, AppContext } from './botstrap';
 
 interface MyState {
     count: number;
