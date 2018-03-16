@@ -1,7 +1,7 @@
 
 import { Activity, BotContext, ConversationState } from 'botbuilder';
 
-export class AppContext <State> extends BotContext {
+export class BrandonContext <State> extends BotContext {
     // instead of adding things here, add them in `from()`
     private constructor(context: BotContext) {
         super(context);
@@ -19,8 +19,8 @@ export class AppContext <State> extends BotContext {
     static async from <State = any> (
         context: BotContext,
         conversationState: ConversationState<State>,
-    ): Promise<AppContext<State>> {
-        const appContext = new AppContext<State>(context);
+    ): Promise<BrandonContext<State>> {
+        const appContext = new BrandonContext<State>(context);
         appContext.state = await conversationState.read(context);
         return appContext;
     }
