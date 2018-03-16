@@ -7,7 +7,9 @@ export { BrandonContext }
 
 export class BrandonBot <AppState> extends Botstrap<BrandonContext<AppState>> {
     conversationState = new ConversationState<AppState>(new MemoryStorage());
-    adapter = new ConsoleAdapter();
+
+    adapter = new ConsoleAdapter()
+        .use(this.conversationState);
 
     getContext(
         context: BotContext,
