@@ -1,4 +1,4 @@
-import { ConversationState, ConsoleAdapter, MemoryStorage, BotContext } from 'botbuilder';
+import { ConversationState, ConsoleAdapter, MemoryStorage, BotContext, ConversationReference } from 'botbuilder';
 
 import { Botstrap } from './Botstrap';
 
@@ -23,14 +23,28 @@ export class BrandonBot <AppState> extends Botstrap<BrandonContext<AppState>> {
         ) => Promise<void>
     ) {
         this.adapter.listen(this.do(handler));
+        return Promise.resolve();
     }
 
     startConversation(
-        appContext: BrandonContext<AppState>,
+        reference: Partial<ConversationReference>,
         handler: (
             context: BrandonContext<AppState>,
         ) => Promise<void>
     ) {
-        // this.adapter.startConversation(appContext, this.do(handler));
+        // ConsoleAdapter doesn't currently support this
+        // return this.adapter.startConversation(reference, this.do(handler));
+        return Promise.resolve();
+    }
+
+    continueConversation(
+        reference: Partial<ConversationReference>,
+        handler: (
+            context: BrandonContext<AppState>,
+        ) => Promise<void>
+    ) {
+        // ConsoleAdapter doesn't currently support this
+        // return this.adapter.continueConversation(reference, this.do(handler));
+        return Promise.resolve();
     }
 }

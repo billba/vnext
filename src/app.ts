@@ -15,8 +15,8 @@ bot.processRequest(async context => {
     }
 });
 
-function onSomeEventSomewhere(context: BrandonContext<EchoState>) {
-    bot.startConversation(context, async context => {
+async function onSomeEventSomewhere(context: BrandonContext<EchoState>) {
+    await bot.startConversation(context.request, async context => {
         context.reply(`This is a proactive message`);
     })
 }

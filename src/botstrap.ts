@@ -17,12 +17,19 @@ export abstract class Botstrap <AppContext> {
         handler: (
             appContext: AppContext,
         ) => Promise<void>
-    ): void;
+    ): Promise<void>;
 
     abstract startConversation(
-        context: BotContext,
+        reference: Partial<ConversationReference>,
         handler: (
             appContext: AppContext,
         ) => Promise<void>
-    ): void;
+    ): Promise<void>;
+
+    abstract continueConversation(
+        reference: Partial<ConversationReference>,
+        handler: (
+            appContext: AppContext,
+        ) => Promise<void>
+    ): Promise<void>;
 }
