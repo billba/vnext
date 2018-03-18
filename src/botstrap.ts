@@ -1,6 +1,8 @@
-import { BotContext } from 'botbuilder';
+import { BotContext, BotAdapter, ConversationReference } from 'botbuilder';
 
 export abstract class Botstrap <AppContext> {
+    abstract adapter: BotAdapter;
+
     protected do (
         handler: (appContext: AppContext,
     ) => Promise<void>) {
@@ -13,23 +15,31 @@ export abstract class Botstrap <AppContext> {
         context: BotContext
     ): Promise<AppContext>;
 
-    abstract processRequest(
+    abstract onRequest(
         handler: (
             appContext: AppContext,
         ) => Promise<void>
     ): Promise<void>;
 
-    abstract startConversation(
+    startConversation(
         reference: Partial<ConversationReference>,
         handler: (
             appContext: AppContext,
         ) => Promise<void>
-    ): Promise<void>;
+    ) {
+        // This will have to wait until startConversation is added to BotAdapter
+        // return this.adapter.startConversation(reference, this.do(handler))
+        return Promise.resolve();
+    }
 
-    abstract continueConversation(
+    continueConversation(
         reference: Partial<ConversationReference>,
         handler: (
             appContext: AppContext,
         ) => Promise<void>
-    ): Promise<void>;
+    ) {
+        // This will have to wait until startConversation is added to BotAdapter
+        // return this.adapter.continueConversation(reference, this.do(handler))
+        return Promise.resolve();
+    }
 }

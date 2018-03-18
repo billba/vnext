@@ -6,7 +6,7 @@ interface EchoState {
 
 const bot = new BrandonBot<EchoState>();
 
-bot.processRequest(async context => {
+bot.onRequest(async context => {
     if (context.request.type === 'message') {
         context.state.count = context.state.count === undefined ? 0 : context.state.count + 1;
         await context.reply(`${context.state.count}: You said "${context.request.text}"`);
