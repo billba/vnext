@@ -13,7 +13,7 @@
   "license": "MIT",
   "dependencies": {
     "botbuilder": "^4.0.0-m2.1",
-    "botbuilder-botbldr": "^0.1.5"
+    "botbuilder-botbldr": "^0.1.6"
   },
   "devDependencies": {
     "typescript": "^2.7.2"

@@ -1,10 +1,10 @@
-import { StarterConsoleBot, StarterServiceBot } from 'botbuilder-botbldr';
+import { ConsoleBot, ServiceBot } from 'botbuilder-botbldr';
 
 interface EchoState {
     count: number;
 }
 
-const bot = new StarterServiceBot<EchoState>();
+const bot = new ConsoleBot<EchoState>();
 
 bot.onRequest(async context => {
     switch (context.request.type) {
