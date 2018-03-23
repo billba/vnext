@@ -1,22 +1,20 @@
-import { BrandonBot, BrandonContext } from './BrandonBot';
+import { StarterConsoleBot, StarterServiceBot } from 'botbuilder-botbldr';
 
 interface EchoState {
     count: number;
 }
 
-const bot = new BrandonBot<EchoState>();
+const bot = new StarterServiceBot<EchoState>();
 
 bot.onRequest(async context => {
-    if (context.request.type === 'message') {
-        context.state.count = context.state.count === undefined ? 0 : context.state.count + 1;
-        await context.reply(`${context.state.count}: You said "${context.request.text}"`);
-    } else {
-        await context.reply(`'[${context.request.type}' activity detected]`);
+    switch (context.request.type) {
+        case 'conversationUpdate':
+            await context.sendActivity(`'[${context.request.type}' activity detected]`);
+            break;
+
+        case 'message':
+            context.conversationState.count = context.conversationState.count === undefined ? 0 : context.conversationState.count + 1;
+            await context.sendActivity(`${context.conversationState.count}: You said "${context.request.text}"`);
+            break;
     }
 });
-
-async function onSomeEventSomewhere(context: BrandonContext<EchoState>) {
-    await bot.startConversation(context.request, async context => {
-        context.reply(`This is a proactive message`);
-    })
-}

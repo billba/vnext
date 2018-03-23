@@ -12,14 +12,10 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
-    "botbuilder-core": "file:../botbuilder-js/libraries/botbuilder-core",
-    "botbuilder-core-extensions": "file:../botbuilder-js/libraries/botbuilder-core-extensions",
-    "botframework-schema": "file:../botbuilder-js/libraries/botframework-schema",
-    "botframework-connector": "file:../botbuilder-js/libraries/botframework-connector",
-    "botbuilder": "file:../botbuilder-js/libraries/botbuilder"
+    "botbuilder": "^4.0.0-m2.1",
+    "botbuilder-botbldr": "^0.1.5"
   },
   "devDependencies": {
-    "@types/jsonwebtoken": "^7.2.5",
     "typescript": "^2.7.2"
   }
 }
