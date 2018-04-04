@@ -1,20 +1,14 @@
-import { ConsoleBot, ServiceBot } from 'botbuilder-botbldr';
+import { ConsoleBot } from 'botbuilder-botbldr';
+import { Topic } from 'botbuilder-topical';
+import { root } from './game';
+import { MemoryStorage } from 'botbuilder';
 
-interface EchoState {
-    count: number;
-}
+const storage = new MemoryStorage();
 
-const bot = new ConsoleBot<EchoState>();
+const bot = new ConsoleBot(storage);
+
+Topic.init(storage);
 
 bot.onRequest(async context => {
-    switch (context.request.type) {
-        case 'conversationUpdate':
-            await context.sendActivity(`'[${context.request.type}' activity detected]`);
-            break;
-
-        case 'message':
-            context.conversationState.count = context.conversationState.count === undefined ? 0 : context.conversationState.count + 1;
-            await context.sendActivity(`${context.conversationState.count}: You said "${context.request.text}"`);
-            break;
-    }
-});
+    await Topic.do(context, () => root.createInstance(context))
+})

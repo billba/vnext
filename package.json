@@ -6,16 +6,18 @@
   "scripts": {
     "watch": "tsc -w",
     "build": "tsc",
-    "start": "node lib/app.js",
+    "start": "nodemon lib/app.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
   "license": "MIT",
   "dependencies": {
-    "botbuilder": "^4.0.0-m2.1",
-    "botbuilder-botbldr": "^0.1.6"
+    "botbuilder": "4.0.0-m2.2",
+    "botbuilder-botbldr": "0.1.6",
+    "botbuilder-topical": "0.8.1"
   },
   "devDependencies": {
-    "typescript": "^2.7.2"
+    "typescript": "^2.7.2",
+    "nodemon": "1.17.3"
   }
 }
