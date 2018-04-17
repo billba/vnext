@@ -1,5 +1,4 @@
-import { BotContext } from 'botbuilder';
-import { TopicWithChild, TopicInstance, Topic } from 'botbuilder-topical';
+import { TopicWithChild, Topic, Culture, hasNumber, Validator } from 'botbuilder-topical';
 
 interface GameInit {
     maxNumber: number;
@@ -11,116 +10,127 @@ interface GameState {
     maxGuesses: number;
     number: number;
     guess: number;
+
+    child?: string;
 }
 
-interface GameReturn {
-    success: boolean;
-}
+class Game extends Topic<GameInit, GameState, boolean, string> {
 
-class Game extends Topic<GameInit, GameState, GameReturn> {
-    async init(
-        context: BotContext,
-        instance: TopicInstance<GameState>,
+    hasNumber: Validator<number>;
+
+    constructor(culture: string) {
+        super(culture);
+
+        this.hasNumber = hasNumber(culture)
+            .and<number>((activity, num) =>
+                num > 0 && num < this.state.maxNumber
+                    ? num
+                    : { reason: 'out_of_range' }
+            )
+    }
+
+    async onBegin(
         args: GameInit,
     ) {
-        instance.state = {
+        this.state = {
             ... args,
             number: Math.floor(Math.random() * args.maxNumber),
             guess: 0,
         }
 
-        await context.sendActivity(`Please guess a number between 0 and ${instance.state.maxNumber}`);
+        await this.context.sendActivity(`Please guess a number between 0 and ${this.state.maxNumber}`);
     }
 
-    async onReceive(
-        context: BotContext,
-        instance: TopicInstance<GameState>,
-    ) {
-        if (context.request.type !== 'message')
+    async onTurn() {
+
+        if (!this.text)
             return;
         
-        const text = context.request.text.trim();
-
-        if (text === 'cheat') {
-            await context.sendActivity(`The number is ${instance.state.number}`);
+        if (this.text === 'cheat') {
+            await this.context.sendActivity(`The number is ${this.state.number}`);
             return;
         }
 
-        const num = Number.parseInt(text);
+        const result = await this.hasNumber.validate(this.context.activity);
 
-        if (isNaN(num) || num < 0 || num > instance.state.maxNumber) {
-            await context.sendActivity(`Please guess a number between 0 and ${instance.state.maxNumber}`);
-        } else {
-            if (num === instance.state.number) {
-                context.sendActivity(`You got it!`);
-                return this.returnToParent(instance, {
-                    success: true
-                });
-            }
+        if (result.reason) {
 
-            await context.sendActivity(`Too ${num < instance.state.number ? "low" : "high"}`);
-
-            instance.state.guess ++;
-
-            if (instance.state.guess >= instance.state.maxGuesses) {
-                context.sendActivity(`Sorry, you're out of guesses`);
-                return this.returnToParent(instance, {
-                    success: false
-                });
-            }
-
-            await context.sendActivity(`You have ${instance.state.maxGuesses - instance.state.guess} guesses left.`);
+            await this.context.sendActivity(`Please guess a number between 0 and ${this.state.maxNumber}`);
+            return;
         }
+
+        const num = result.value!;
+
+        if (num === this.state.number) {
+
+            await this.context.sendActivity(`You got it!`);
+            return this.returnToParent(true);
+        }
+
+        await this.context.sendActivity(`Too ${num < this.state.number ? "low" : "high"}`);
+
+        this.state.guess ++;
+
+        if (this.state.guess >= this.state.maxGuesses) {
+
+            await this.context.sendActivity(`Sorry, you're out of guesses`);
+            return this.returnToParent(false);
+        }
+
+        await this.context.sendActivity(`You have ${this.state.maxGuesses - this.state.guess} guesses left.`);
     }
 }
 
-const game = new Game();
+const help = `You can 'start game' or ask the time.`;
 
 export class Root extends TopicWithChild {
-    constructor(name?: string) {
-        super(name);
 
-        this
-            .onChildReturn(game, async (context, instance, childInstance) => {
-                if (childInstance.returnArgs.success)
-                    await context.sendActivity(`Congraulations on your victory!`);
-                await context.sendActivity(`Welcome back to the root!`);
-                this.clearChild(context, instance);
-            });
+    static subtopics = [Game];
+
+    async onBegin() {
+
+        await this.context.sendActivity(`Hello. ${help}`);
     }
 
-    async init(
-        context: BotContext,
-        instance: TopicInstance,
-    ) {
-        await context.sendActivity(`Hello. You can 'start game'`);
-    }
+    async onTurn() {
 
-    async onReceive(
-        context: BotContext,
-        instance: TopicInstance,
-    ) {
-        const text = context.request.type === 'message' && context.request.text.trim();
+        if (!this.text)
+            return;
 
-        if (text === 'cancel') {
-            await context.sendActivity(`Okay, cancelled.`);
-            this.clearChild(context, instance);
+        if (this.text === 'cancel') {
+
+            await this.context.sendActivity(`Okay, cancelled.`);
+            this.clearChild();
             return;
         }
 
-        if (await this.dispatchToChild(context, instance))
+        if (this.text.includes('time')) {
+
+            await this.context.sendActivity(`It's ${new Date().toLocaleTimeString()}.`);
+            return;
+        }
+
+        if (await this.dispatchToChild())
             return;
 
-        if (text === 'start game') {
-            this.setChild(context, instance, await game.createInstance(context, instance, {
+        if (this.text === 'start game') {
+
+            await this.beginChild(Game, {
                 maxGuesses: 7,
                 maxNumber: 100,
-            }))
+            }, Culture.English);
             return;
         }
 
-        await context.sendActivity(`You can 'start game'.`);
+        await this.context.sendActivity(help);
+    }
+
+    async onChildReturn(child: Game) {
+
+        if (child.return!)
+            await this.context.sendActivity(`Congragulations on your victory!`);
+
+        await this.context.sendActivity(`Welcome back to the root!`);
+        this.clearChild();
     }
 }
-
-export const root = new Root();
